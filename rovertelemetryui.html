@@ -28,6 +28,33 @@ var CONNECTED_FLAG = 0;
 var isDown = false;
 var _OPERATION_MODE = "F";
 
+/* Socket.io Client-side */
+var socketIOClient = io.connect('http://'+document.location.hostname+':5055');
+
+//Example data:
+// Send your data
+//socket.emit('my-data', {
+//     data1 : 'something',
+//     data2 : 'something'
+//});
+
+// Received Events from SocketIO Server side
+//socketIOClient.on('util', function(data){
+//	alert('data recv'+data);
+	// Do something with your new data
+//});
+
+//socketIOClient.on('sensor', function(data){
+//	alert('data recv'+data);
+//	// Do something with your new data
+//});
+
+// For throwing event to server from client javascript apps
+function throwSocketIOEvent(event_, data_)
+{
+	socketIOClient.emit(event_, data_);
+}
+
 
 /* Jquery-document Start */
 $(document).ready(function(){
@@ -140,32 +167,7 @@ $(document).mouseup(function(){
 /* Jquery-document End */
 });
 
-/* Socket.io Client-side */
-var socketIOClient = io.connect('http://'+document.location.hostname+':5055');
 
-//Example data:
-// Send your data
-//socket.emit('my-data', {
-//     data1 : 'something',
-//     data2 : 'something'
-//});
-
-// Received Events from SocketIO Server side
-//socketIOClient.on('util', function(data){
-//	alert('data recv'+data);
-	// Do something with your new data
-//});
-
-//socketIOClient.on('sensor', function(data){
-//	alert('data recv'+data);
-//	// Do something with your new data
-//});
-
-// For throwing event to server from client javascript apps
-function throwSocketIOEvent(event_, data_)
-{
-	socketIOClient.emit(event_, data_);
-}
 
 </script>
 <title>rover | Telemetry User Interface</title>
