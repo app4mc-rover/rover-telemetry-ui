@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var server = require('http').createServer(app);
-var io = require('../..')(server);
+var io = require('socket.io')(server);
 var port = process.env.PORT || 5055;
 
 server.listen(port, function () {
@@ -11,7 +11,7 @@ server.listen(port, function () {
 });
 
 // Routing
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '..')));
 
 /*
 var numUsers = 0;
