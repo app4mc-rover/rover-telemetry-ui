@@ -18,12 +18,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link href="stylesheets/rovertelemetry.css" rel="stylesheet" />
-<script src="scripts/javascript/include/jquery_ui/jquery.min.js"></script>
+<script src="scripts/js/jquery.min.js"></script>
 <!-- Socket.io client-side -->
 <script src="/socket.io/socket.io.js"></script>
 <script language="javascript" type="text/javascript">
 /* Global variables */
 var ROVER_ID = -1;
+var ROVER_SPEED = 480;
 var CONNECTED_FLAG = 0;
 var isDown = false;
 var _OPERATION_MODE = "F";
@@ -55,6 +56,126 @@ function throwSocketIOEvent(event_, data_)
 	socketIOClient.emit(event_, data_);
 }
 
+function addToTerminal(data)
+{
+	var dt = new Date();
+	var time = ('0'+dt.getHours()).slice(-2) + ":" + ('0'+dt.getMinutes()).slice(-2) + ":" + ('0'+dt.getSeconds()).slice(-2);
+	$('#terminal').prepend('<br>'+'<span style=\"color:yellow;\">['+time+']</span>   '+data);
+	$('#terminal').scrollTop();
+}
+
+/* socket IO Events from server */
+/* Write something to Display console */
+socketIOClient.on('console_', function(data){
+	addToTerminal(data);
+});
+
+socketIOClient.on('mqtt_connected', function(data){
+	$('#connect_btn').css('border-color', 'green');
+});
+
+socketIOClient.on('mqtt_disconnected', function(data){
+	$('#connect_btn').css('border-color', 'red');
+});
+
+/* Events to update sensor values */
+socketIOClient.on('temperature_update', function(data){
+	$('td#temperature_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('humidity_update', function(data){
+	$('td#humidity_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('irr_update', function(data){
+	$('td#rr_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('irl_update', function(data){
+	$('td#rl_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('ifl_update', function(data){
+	$('td#fl_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('ifr_update', function(data){
+	$('td#fr_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('uf_update', function(data){
+	$('td#front_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('ur_update', function(data){
+	$('td#rear_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('qmcb_update', function(data){
+	$('td#bearing_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('hmcb_update', function(data){
+	$('td#bearing_val').html(data.toFixed(2));
+});
+
+
+socketIOClient.on('gyrox_update', function(data){
+	$('td#gyrox_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('gyroy_update', function(data){
+	$('td#gyroy_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('gyroz_update', function(data){
+	$('td#gyroz_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('accelx_update', function(data){
+	$('td#accelx_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('accely_update', function(data){
+	$('td#accely_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('accelz_update', function(data){
+	$('td#accelz_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('anglex_update', function(data){
+	$('td#anglex_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('angley_update', function(data){
+	$('td#angley_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('anglez_update', function(data){
+	$('td#anglez_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('gyb_update', function(data){
+	$('td#gyb_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('core0_update', function(data){
+	$('td#core0_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('core1_update', function(data){
+	$('td#core1_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('core2_update', function(data){
+	$('td#core2_val').html(data.toFixed(2));
+});
+
+socketIOClient.on('core3_update', function(data){
+	$('td#core3_val').html(data.toFixed(2));
+});
+
 
 /* Jquery-document Start */
 $(document).ready(function(){
@@ -71,6 +192,12 @@ for (i = 1; i<100; i++)
 /* Rover ID Selection actions */
 $('#roverID_select').change(function(){
 	ROVER_ID = $('#roverID_select').val();
+});
+
+/* Rover Speed Selection actions */
+$('#roverSpeed_select').change(function(){
+	ROVER_SPEED = $('#roverSpeed_select').val();
+	throwSocketIOEvent('speed', ROVER_SPEED);
 });
 
 /* Rover control buttons */
@@ -152,6 +279,24 @@ $('#shutdown_btn').mousedown(function(){
  
 });
 
+/* Connect button */
+$('#connect_btn').mousedown(function(){
+	if (ROVER_ID == -1)
+	{
+		addToTerminal("Please select rover ID.");
+		alert ("Please select rover ID");
+	}
+	else
+	{
+		var mqtt_connect_data = {
+			addr: $('#brokerAddr').val(),
+			roverID: ROVER_ID,
+		};
+		throwSocketIOEvent('mqtt_connect',mqtt_connect_data);
+	}
+	
+});
+
 /* Mouseup handler for entire document */
 $(document).mouseup(function(){
 	if (isDown == true)
@@ -180,13 +325,13 @@ $(document).mouseup(function(){
     <div id="mainbox">
       <div id="leftbox">
      	<h3>Enter MQTT-Broker Address:</h3>
-        <input id="brokerAddr" class="formSelectStyle" style="width:70%;" type="text" value="127.0.0.1:1883"/>
+        <input id="brokerAddr" class="formSelectStyle" style="width:70%;" type="text" value="tcp://127.0.0.1:1887"/>
       	<h3>Select Rover ID:</h3>
       	<select class="formSelectStyle" id="roverID_select">
               <option value="-1">Please Select</option>
         </select>
         <h3>Connect:</h3>
-        <input type="button" class="inputButtonStyle" id="turnleft_btn"  style="background:url(images/bgbutton.png) repeat-x; border:solid 2px red;" value="Connect" />
+        <input type="button" class="inputButtonStyle" id="connect_btn"  style="background:url(images/bgbutton.png) repeat-x; border:solid 2px red;" value="Connect" />
         
       	<h3>Rover Control:</h3>
       	
@@ -207,72 +352,84 @@ $(document).mouseup(function(){
       	    <td><input  type="button" class="inputButtonStyle" id="roundright_btn" style="background:url(images/roundright.png) no-repeat scroll 50% 50%,url(images/bgbutton.png) repeat-x; " value="" /></td>
    	      </tr>
    	    </table>
+        
+        <h3>Rover Speed:</h3>
+        <select class="formSelectStyle" id="roverSpeed_select">
+              <option value="480">480 - Highest</option>
+              <option value="460">460</option>
+              <option value="440">440</option>
+              <option value="420">420</option>
+              <option value="400">400</option>
+              <option value="380">380</option>
+              <option value="360">360</option>
+              <option value="0">0 - Lowest</option>
+        </select>
       	<p>&nbsp;</p>
       </div>
       <div id="rightbox">
       	<h3>Received Information:</h3>
         <div id="sensorbox">
-        	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+        	<table id="sensortable" width="100%" border="0" cellspacing="0" cellpadding="0">
         	  <tr>
         	    <td width="8%"><img src="images/telemetry_icons/sonarlogo.png" width="40" height="40" /></td>
         	    <td width="17%">Front</td>
-        	    <td width="11%" class="tdSensorVal">0.00000</td>
+        	    <td width="11%" class="tdSensorVal" id="front_val">0.00000</td>
         	    <td width="5%" class="tdSensorUnit">cm</td>
         	    <td width="8%"><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
         	    <td width="11%">GyroX</td>
-        	    <td width="11%" class="tdSensorVal">0.00000</td>
+        	    <td width="11%" class="tdSensorVal" id="gyrox_val">0.00000</td>
         	    <td width="8%"><img src="images/telemetry_icons/corelogo.png" width="40" height="40" /></td>
         	    <td width="8%">Core0</td>
-        	    <td width="10%" class="tdSensorVal">0.00000</td>
+        	    <td width="10%" class="tdSensorVal" id="core0_val">0.00000</td>
         	    <td width="3%" class="tdSensorUnit">%</td>
        	      </tr>
         	  <tr>
         	    <td><img src="images/telemetry_icons/sonarlogo.png" width="40" height="40" /></td>
         	    <td>Rear</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="rear_val">0.00000</td>
         	    <td class="tdSensorUnit">cm</td>
         	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
         	    <td>GyroY</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="gyroy_val">0.00000</td>
         	    <td><img src="images/telemetry_icons/corelogo.png" width="40" height="40" /></td>
         	    <td>Core1</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="core1_val">0.00000</td>
         	    <td class="tdSensorUnit">%</td>
        	      </tr>
         	  <tr>
         	    <td><img src="images/telemetry_icons/infraredlogo.png" width="40" height="40" /></td>
         	    <td>Front-Right</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="fr_val">0.00000</td>
         	    <td class="tdSensorUnit">cm</td>
         	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
         	    <td>GyroZ</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="gyroz_val">0.00000</td>
         	    <td><img src="images/telemetry_icons/corelogo.png" width="40" height="40" /></td>
         	    <td>Core2</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="core2_val">0.00000</td>
         	    <td class="tdSensorUnit">%</td>
        	      </tr>
         	  <tr>
         	    <td><img src="images/telemetry_icons/infraredlogo.png" width="40" height="40" /></td>
         	    <td>Front-Left</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="fl_val">0.00000</td>
         	    <td class="tdSensorUnit">cm</td>
         	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
         	    <td>AngleX</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="anglex_val">0.00000</td>
         	    <td><img src="images/telemetry_icons/corelogo.png" width="40" height="40" /></td>
         	    <td>Core3</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="core3_val">0.00000</td>
         	    <td class="tdSensorUnit">%</td>
        	      </tr>
         	  <tr>
         	    <td><img src="images/telemetry_icons/infraredlogo.png" width="40" height="40" /></td>
         	    <td>Rear-Right</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="rr_val">0.00000</td>
         	    <td class="tdSensorUnit">cm</td>
         	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
         	    <td>AngleY</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="angley_val">0.00000</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
@@ -281,11 +438,11 @@ $(document).mouseup(function(){
         	  <tr>
         	    <td><img src="images/telemetry_icons/infraredlogo.png" width="40" height="40" /></td>
         	    <td>Rear-Left</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="rl_val">0.00000</td>
         	    <td class="tdSensorUnit">cm</td>
         	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
         	    <td>AngleZ</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="anglez_val">0.00000</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
@@ -294,11 +451,11 @@ $(document).mouseup(function(){
         	  <tr>
         	    <td><img src="images/telemetry_icons/templogo.png" width="40" height="40" /></td>
         	    <td>Temperature</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="temperature_val">0.00000</td>
         	    <td class="tdSensorUnit">deg</td>
         	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
         	    <td>AccelX</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="accelx_val">0.00000</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
@@ -307,11 +464,11 @@ $(document).mouseup(function(){
         	  <tr>
         	    <td><img src="images/telemetry_icons/templogo.png" width="40" height="40" /></td>
         	    <td>Humidity</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="humidity_val">0.00000</td>
         	    <td class="tdSensorUnit">%</td>
         	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
         	    <td>AccelY</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="accely_val">0.00000</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
@@ -320,11 +477,11 @@ $(document).mouseup(function(){
         	  <tr>
         	    <td><img src="images/telemetry_icons/gyrologo.png" width="40" height="40" /></td>
         	    <td>Bearing</td>
-        	    <td class="tdSensorVal">0.00000</td>
-        	    <td class="tdSensorUnit">deg</td>
+        	    <td class="tdSensorVal" id="bearing_val">0.00000</td>
+        	    <td class="tdSensorUnit" >deg</td>
         	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
         	    <td>AccelZ</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="accelz_val">0.00000</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
@@ -337,7 +494,7 @@ $(document).mouseup(function(){
         	    <td>&nbsp;</td>
         	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
         	    <td>Bearing</td>
-        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorVal" id="gyb_val">0.00000</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
@@ -346,15 +503,9 @@ $(document).mouseup(function(){
       	  </table>
 
 </div>
-        <h3>Display Console:</h3>
+        <h3>Event Console:</h3>
         <div id="terminal">
-        	<p>asdasdasdasd<br />
-        	</p>
-       	  <p>&nbsp;</p>
-       	  <p><br />
-       	    <br />
-      	  </p>
-</div>
+		</div>
         <br />
       </div>
       

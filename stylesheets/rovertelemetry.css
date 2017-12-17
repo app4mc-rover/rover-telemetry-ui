@@ -102,6 +102,8 @@ h3
 	font-size:12px;
 	border-radius: 5px 10px 7px;
 	overflow:auto;
+	height:170px;
+	padding:20px;
 }
 
 .formSelectStyle
