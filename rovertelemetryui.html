@@ -7,7 +7,7 @@
  http://www.eclipse.org/legal/epl-v10.html
 
  Description:
-    rover-telemetry | Main stylesheet for rovertelemetry
+    rover-telemetry-ui | Main web UI for MQTT communication
 
  Designed and realized by:
     M. Ozcelikors <mozcelikors@gmail.com>
@@ -20,7 +20,7 @@
 <link href="stylesheets/rovertelemetry.css" rel="stylesheet" />
 <script src="scripts/javascript/include/jquery_ui/jquery.min.js"></script>
 <!-- Socket.io client-side -->
-<script src="http://127.0.0.1:5505/socket.io/socket.io.js"></script>
+<script src="http://127.0.0.1:5055/socket.io/socket.io.js"></script>
 <script language="javascript" type="text/javascript">
 /* Global variables */
 var ROVER_ID = -1;
@@ -139,6 +139,33 @@ $(document).mouseup(function(){
 
 /* Jquery-document End */
 });
+
+/* Socket.io Client-side */
+var socketIOClient = io.connect('http://'+document.location.hostname+':5055');
+
+//Example data:
+// Send your data
+//socket.emit('my-data', {
+//     data1 : 'something',
+//     data2 : 'something'
+//});
+
+// Received Events from SocketIO Server side
+//socketIOClient.on('util', function(data){
+//	alert('data recv'+data);
+	// Do something with your new data
+//});
+
+//socketIOClient.on('sensor', function(data){
+//	alert('data recv'+data);
+//	// Do something with your new data
+//});
+
+// For throwing event to server from client javascript apps
+function throwSocketIOEvent(event_, data_)
+{
+	socketIOClient.emit(event_, data_);
+}
 
 </script>
 <title>rover | Telemetry User Interface</title>
