@@ -1,0 +1,338 @@
+<!--
+/*
+ Copyright (c) 2017 FH Dortmund.
+ All rights reserved. This program and the accompanying materials
+ are made available under the terms of the Eclipse Public License v1.0
+ which accompanies this distribution, and is available at
+ http://www.eclipse.org/legal/epl-v10.html
+
+ Description:
+    rover-telemetry | Main stylesheet for rovertelemetry
+
+ Designed and realized by:
+    M. Ozcelikors <mozcelikors@gmail.com>
+*/
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="stylesheets/rovertelemetry.css" rel="stylesheet" />
+<script src="scripts/javascript/include/jquery_ui/jquery.min.js"></script>
+<!-- Socket.io client-side -->
+<script src="http://127.0.0.1:5505/socket.io/socket.io.js"></script>
+<script language="javascript" type="text/javascript">
+/* Global variables */
+var ROVER_ID = -1;
+var CONNECTED_FLAG = 0;
+var isDown = false;
+var _OPERATION_MODE = "F";
+
+
+/* Jquery-document Start */
+$(document).ready(function(){
+	
+/* Add options to rover ID selection*/
+for (i = 1; i<100; i++)
+{
+	$('#roverID_select').append($('<option>', {
+		value: i,
+		text: i
+	}));
+}
+
+/* Rover ID Selection actions */
+$('#roverID_select').change(function(){
+	ROVER_ID = $('#roverID_select').val();
+});
+
+/* Rover control buttons */
+ $('#forward_btn').mousedown(function(){
+	if (_OPERATION_MODE != "W")
+	{
+		_OPERATION_MODE = "W";	
+		throwSocketIOEvent('control','W');
+	}
+	isDown = true;
+});
+
+$('#backward_btn').mousedown(function(){
+	if (_OPERATION_MODE != "S")
+	{
+		_OPERATION_MODE = "S";	
+		throwSocketIOEvent('control','S');
+	}
+	isDown = true;
+});
+
+$('#turnleft_btn').mousedown(function(){
+	if (_OPERATION_MODE != "Q")
+	{
+		_OPERATION_MODE = "Q";	
+		throwSocketIOEvent('control','Q');
+	}
+	isDown = true;
+});
+
+$('#turnright_btn').mousedown(function(){
+	if (_OPERATION_MODE != "E")
+	{
+		_OPERATION_MODE = "E";	
+		throwSocketIOEvent('control','E');
+	}
+	isDown = true;
+});
+
+$('#turnbackright_btn').mousedown(function(){
+	if (_OPERATION_MODE != "D")
+	{
+		_OPERATION_MODE = "D";	
+		throwSocketIOEvent('control','D');
+	}
+	isDown = true;
+});
+
+$('#turnbackleft_btn').mousedown(function(){
+	if (_OPERATION_MODE != "A")
+	{
+		_OPERATION_MODE = "A";
+		throwSocketIOEvent('control','A');
+	}
+	isDown = true;
+});
+
+$('#roundleft_btn').mousedown(function(){
+	if (_OPERATION_MODE != "J")
+	{
+		_OPERATION_MODE = "J";
+		throwSocketIOEvent('control','J');	
+	}
+	isDown = true;
+});
+
+$('#roundright_btn').mousedown(function(){
+	if (_OPERATION_MODE != "K")
+	{
+		_OPERATION_MODE = "K";
+		throwSocketIOEvent('control','K');	
+	}
+	isDown = true;
+});
+
+$('#shutdown_btn').mousedown(function(){
+	// Send shutdown hook to RPi - we denote it by "R"
+	throwSocketIOEvent('control','R');
+ 
+});
+
+/* Mouseup handler for entire document */
+$(document).mouseup(function(){
+	if (isDown == true)
+	{
+		_OPERATION_MODE = "F";
+		throwSocketIOEvent('control','F');
+		isDown = false;	
+	}	 
+});
+
+
+
+/* Jquery-document End */
+});
+
+</script>
+<title>rover | Telemetry User Interface</title>
+</head>
+
+<body>
+    <div id="logo">
+    	<img src="images/rovertelemetry_logo.png" width="429" height="164" />
+	</div>
+    <div id="mainbox">
+      <div id="leftbox">
+     	<h3>Enter MQTT-Broker Address:</h3>
+        <input id="brokerAddr" class="formSelectStyle" style="width:70%;" type="text" value="127.0.0.1:1883"/>
+      	<h3>Select Rover ID:</h3>
+      	<select class="formSelectStyle" id="roverID_select">
+              <option value="-1">Please Select</option>
+        </select>
+        <h3>Connect:</h3>
+        <input type="button" class="inputButtonStyle" id="turnleft_btn"  style="background:url(images/bgbutton.png) repeat-x; border:solid 2px red;" value="Connect" />
+        
+      	<h3>Rover Control:</h3>
+      	
+      	<table width="99%" border="0" cellspacing="0" cellpadding="0">
+      	  <tr>
+      	    <td><input type="button" class="inputButtonStyle" id="turnleft_btn"  style="background:url(images/Untitled-2_r1_c6_r1_c1.png) no-repeat scroll 50% 50%,url(images/bgbutton.png) repeat-x; " value="" /></td>
+      	    <td><input type="button"  class="inputButtonStyle"  style="  background:url(images/Untitled-2_r1_c6_r1_c4.png) no-repeat scroll 50% 50%,url(images/bgbutton.png) repeat-x; " id="forward_btn" value="" /></td>
+      	    <td><input  type="button" class="inputButtonStyle" id="turnright_btn" style="background:url(images/Untitled-2_r1_c6_r1_c7.png) no-repeat scroll 50% 50%,url(images/bgbutton.png) repeat-x; " value="" /></td>
+   	      </tr>
+      	  <tr>
+      	    <td><input type="button" class="inputButtonStyle" id="turnbackleft_btn"  style="background:url(images/Untitled-2_r1_c6_r3_c1.png) no-repeat  scroll 50% 50% ,url(images/bgbutton.png) repeat-x;" value="" /></td>
+      	    <td><input type="button"  class="inputButtonStyle"  style="  background:url(images/Untitled-2_r1_c6_r3_c3.png) no-repeat scroll 50% 50%,url(images/bgbutton.png) repeat-x; " id="backward_btn" value="" /></td>
+      	    <td><input  type="button" class="inputButtonStyle" id="turnbackright_btn" style=" background:url(images/Untitled-2_r1_c6_r3_c7.png) no-repeat scroll 50% 50%,url(images/bgbutton.png) repeat-x; " value="" /></td>
+   	      </tr>
+      	  <tr>
+      	    <td><input  type="button"  class="inputButtonStyle" id="roundleft_btn" style="background:url(images/roundleft.png) no-repeat scroll 50% 50%,url(images/bgbutton.png) repeat-x; " value="" /></td>
+      	    <td><input type="button"  class="inputButtonStyle"  id="shutdown_btn" style=" background:url(images/shutdown.png) no-repeat scroll 50% 50%,url(images/bgbuttonred.png) repeat-x; "  value="" /></td>
+      	    <td><input  type="button" class="inputButtonStyle" id="roundright_btn" style="background:url(images/roundright.png) no-repeat scroll 50% 50%,url(images/bgbutton.png) repeat-x; " value="" /></td>
+   	      </tr>
+   	    </table>
+      	<p>&nbsp;</p>
+      </div>
+      <div id="rightbox">
+      	<h3>Received Information:</h3>
+        <div id="sensorbox">
+        	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+        	  <tr>
+        	    <td width="8%"><img src="images/telemetry_icons/sonarlogo.png" width="40" height="40" /></td>
+        	    <td width="17%">Front</td>
+        	    <td width="11%" class="tdSensorVal">0.00000</td>
+        	    <td width="5%" class="tdSensorUnit">cm</td>
+        	    <td width="8%"><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
+        	    <td width="11%">GyroX</td>
+        	    <td width="11%" class="tdSensorVal">0.00000</td>
+        	    <td width="8%"><img src="images/telemetry_icons/corelogo.png" width="40" height="40" /></td>
+        	    <td width="8%">Core0</td>
+        	    <td width="10%" class="tdSensorVal">0.00000</td>
+        	    <td width="3%" class="tdSensorUnit">%</td>
+       	      </tr>
+        	  <tr>
+        	    <td><img src="images/telemetry_icons/sonarlogo.png" width="40" height="40" /></td>
+        	    <td>Rear</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorUnit">cm</td>
+        	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
+        	    <td>GyroY</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td><img src="images/telemetry_icons/corelogo.png" width="40" height="40" /></td>
+        	    <td>Core1</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorUnit">%</td>
+       	      </tr>
+        	  <tr>
+        	    <td><img src="images/telemetry_icons/infraredlogo.png" width="40" height="40" /></td>
+        	    <td>Front-Right</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorUnit">cm</td>
+        	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
+        	    <td>GyroZ</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td><img src="images/telemetry_icons/corelogo.png" width="40" height="40" /></td>
+        	    <td>Core2</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorUnit">%</td>
+       	      </tr>
+        	  <tr>
+        	    <td><img src="images/telemetry_icons/infraredlogo.png" width="40" height="40" /></td>
+        	    <td>Front-Left</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorUnit">cm</td>
+        	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
+        	    <td>AngleX</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td><img src="images/telemetry_icons/corelogo.png" width="40" height="40" /></td>
+        	    <td>Core3</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorUnit">%</td>
+       	      </tr>
+        	  <tr>
+        	    <td><img src="images/telemetry_icons/infraredlogo.png" width="40" height="40" /></td>
+        	    <td>Rear-Right</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorUnit">cm</td>
+        	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
+        	    <td>AngleY</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td class="tdSensorUnit"></td>
+       	      </tr>
+        	  <tr>
+        	    <td><img src="images/telemetry_icons/infraredlogo.png" width="40" height="40" /></td>
+        	    <td>Rear-Left</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorUnit">cm</td>
+        	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
+        	    <td>AngleZ</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td class="tdSensorUnit"></td>
+       	      </tr>
+        	  <tr>
+        	    <td><img src="images/telemetry_icons/templogo.png" width="40" height="40" /></td>
+        	    <td>Temperature</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorUnit">deg</td>
+        	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
+        	    <td>AccelX</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td class="tdSensorUnit"></td>
+       	      </tr>
+        	  <tr>
+        	    <td><img src="images/telemetry_icons/templogo.png" width="40" height="40" /></td>
+        	    <td>Humidity</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorUnit">%</td>
+        	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
+        	    <td>AccelY</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td class="tdSensorUnit"></td>
+       	      </tr>
+        	  <tr>
+        	    <td><img src="images/telemetry_icons/gyrologo.png" width="40" height="40" /></td>
+        	    <td>Bearing</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td class="tdSensorUnit">deg</td>
+        	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
+        	    <td>AccelZ</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td class="tdSensorVal">&nbsp;</td>
+       	      </tr>
+        	  <tr>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
+        	    <td>Bearing</td>
+        	    <td class="tdSensorVal">0.00000</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+       	      </tr>
+      	  </table>
+
+</div>
+        <h3>Display Console:</h3>
+        <div id="terminal">
+        	<p>asdasdasdasd<br />
+        	</p>
+       	  <p>&nbsp;</p>
+       	  <p><br />
+       	    <br />
+      	  </p>
+</div>
+        <br />
+      </div>
+      
+    </div>
+    <div class="footer">
+      <span style="color:red;">rover-telemetry-ui</span> | MQTT Clients to interact with your rover<br />
+      <span style="font-size:10px; color:#2E2E2E;">Web Application: M.Ozcelikors, FH Dortmund</span>
+</div>
+</body>
+</html>

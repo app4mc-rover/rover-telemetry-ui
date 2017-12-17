@@ -1,0 +1,189 @@
+/*
+ Copyright (c) 2017 FH Dortmund.
+ All rights reserved. This program and the accompanying materials
+ are made available under the terms of the Eclipse Public License v1.0
+ which accompanies this distribution, and is available at
+ http://www.eclipse.org/legal/epl-v10.html
+
+ Description:
+    rover-telemetry | Main stylesheet for rovertelemetry
+
+ Author:
+    M. Ozcelikors <mozcelikors@gmail.com>
+*/
+
+body
+{
+	background: #333 url(../images/stripe_cebae0835a8eceff9ab9a26b4a609d9c.png) repeat;
+	height: 100%;
+}
+
+html
+{
+    height: 100%;
+}
+
+#logo
+{
+	display:block;
+	width:50%;
+	margin:0 auto;
+	margin-top:50px;
+	text-align:center;
+}
+
+#mainbox
+{
+	display:block;
+	margin: 1% auto;
+	width:70%;
+	background-color:#666;
+	border-radius: 15px 50px 30px;	
+	border:10px solid rgba(0,0,0,0.1);
+	padding:2%;
+	margin-bottom:0;
+	overflow: auto; /* Helps to extend container #mainbox with what it holds */
+}
+
+#leftbox
+{
+	padding:1%;
+	display:inline-block;
+	float:left;
+	width:30%;
+	background-color:rgba(0,0,0,0.1);
+	border-radius: 15px 50px 30px;
+	border:1px solid #999;
+	line-height:100%;
+
+	overflow:auto;
+}
+
+#rightbox
+{
+	padding:1%;
+	display:inline-block;
+	float:right;
+	width:65%;
+	background-color:rgba(0,0,0,0.1);
+	border-radius: 15px 50px 30px;
+	border:1px solid #999;
+	line-height:100%;
+
+	overflow:auto;
+}
+
+h3
+{
+	color:white;
+	text-decoration:bold;
+	font-family:Georgia, "Times New Roman", Times, serif;
+	font-size:18px;
+}
+
+#sensorbox
+{
+	background-color:#CCC;
+	color:#333;
+	padding:1%;
+	font-family:"Courier New", Courier, monospace;
+	font-size:13px;
+	font-weight:bold;
+	border-radius: 5px 10px 7px;
+	overflow:scroll;
+}
+
+#terminal
+{
+	background-color:#333;
+	color:#0F0;
+	padding:1%;
+	font-family:"Courier New", Courier, monospace;
+	font-size:12px;
+	border-radius: 5px 10px 7px;
+	overflow:auto;
+}
+
+.formSelectStyle
+{
+	background-color:gray;
+	padding-top:10px;
+	padding-bottom:10px; 
+	padding-right:30px;
+	padding-left:30px;
+	color:white;
+	font:Arial, Helvetica, sans-serif;
+	font-size:18px;
+	display:block;
+	width:99%;	
+}
+
+.inputButtonStyle
+{
+	font-size:50px;
+	width:95%;
+	margin-right:10px;
+	height:75px;
+}
+
+.inputButtonStyle 
+{
+	-moz-box-shadow:inset 0px 1px 0px 0px #a6a6a6;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #a6a6a6;
+	box-shadow:inset 0px 1px 0px 0px #a6a6a6;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #bababa), color-stop(1, #9e9e9e) );
+	background:-moz-linear-gradient( center top, #bababa 5%, #9e9e9e 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#bababa', endColorstr='#9e9e9e');
+	background-color:#bababa;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #adadad;
+	display:inline-block;
+	color:#fafafa;
+	font-family:arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:1px 1px 0px #808080;
+	border:1px solid #CCCCCC;
+	margin:2px;
+	cursor:pointer;
+}
+.inputButtonStyle:hover 
+{
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #9e9e9e), color-stop(1, #bababa) );
+	background:-moz-linear-gradient( center top, #9e9e9e 5%, #bababa 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#9e9e9e', endColorstr='#bababa');
+	background-color:#9e9e9e;
+}
+
+.inputButtonStyle:active 
+{
+	position:relative;
+	top:1px;
+}
+
+.tdSensorVal
+{
+	color:#F00;
+	overflow:hidden;
+}
+.tdSensorUnit
+{
+	color:#600;
+}
+
+.footer
+{
+	margin:0 auto;
+	margin-top:20px;
+	margin-bottom:10px;
+	display:block;
+	width:70%;
+	color:#999;
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:12px;
+	text-align:center;
+}
