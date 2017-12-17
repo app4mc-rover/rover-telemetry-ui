@@ -29,6 +29,7 @@ app.use(express.static(path.join(__dirname, '..')));
 
 
 io.on('connection', function (socket) {
+	console.log ('A client is connected');
 
 	/* Control data received */
 	socket.on('control', function (data) {
