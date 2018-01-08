@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, '..')));
 
 io.on('connection', function (socket) {
 	console.log ('A client is connected to socket.io server');
-	
+	console.log ('Go to your browser and enter http://<your host>:5055/rovertelemetryui.html');	
 	/* MQTT connection failed */
 	function connectionFailed ()
 	{
@@ -157,7 +157,7 @@ io.on('connection', function (socket) {
 					var myval = json_data.dht22.temperature;
 					socket.emit('temperature_update', myval);
 					
-					var myval = json_data.dht22.temperature;
+					var myval = json_data.dht22.humidity;
 					socket.emit('humidity_update', myval);
 					
 					var myval = json_data.infrared.rearright;
