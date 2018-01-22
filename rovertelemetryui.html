@@ -28,6 +28,7 @@ var ROVER_SPEED = 480;
 var CONNECTED_FLAG = 0;
 var isDown = false;
 var _OPERATION_MODE = "F";
+var USE_CREDENTIALS = 0;
 
 /* Socket.io Client-side */
 var socketIOClient = io.connect('http://'+document.location.hostname+':5055');
@@ -291,6 +292,9 @@ $('#connect_btn').mousedown(function(){
 		var mqtt_connect_data = {
 			addr: $('#brokerAddr').val(),
 			roverID: ROVER_ID,
+			useCredentials: USE_CREDENTIALS,
+			username: $('#username_box').val(),
+			password: $('#password_box').val() 
 		};
 		throwSocketIOEvent('mqtt_connect',mqtt_connect_data);
 	}
@@ -305,6 +309,22 @@ $(document).mouseup(function(){
 		throwSocketIOEvent('control','F');
 		isDown = false;	
 	}	 
+});
+
+//Hide credentials box in the beginning
+$('#credentials_box').hide();
+
+/* Credentials checkbox */
+$('input#credentials_checkbox').click(function(){
+	$('#credentials_box').toggle();
+	if ($('input#credentials_checkbox').is(':checked') == true) 
+	{
+		USE_CREDENTIALS = 1;
+	}
+	else
+	{
+		USE_CREDENTIALS = 0;
+	}
 });
 
 
@@ -325,7 +345,21 @@ $(document).mouseup(function(){
     <div id="mainbox">
       <div id="leftbox">
      	<h3>Enter MQTT-Broker Address:</h3>
-        <input id="brokerAddr" class="formSelectStyle" style="width:70%;" type="text" value="tcp://127.0.0.1:1887"/>
+        <input id="brokerAddr" class="formSelectStyle" style="width:70%;" type="text" value="tcp://127.0.0.1:1883"/><br />
+        <input id="credentials_checkbox" name="credentials_checkbox" type="checkbox" value="1"/>  <span style="color:#FFF; font-size:18px; font-family:Georgia, 'Times New Roman', Times, serif;">Use Credentials</span>
+        <div id="credentials_box">
+        	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td>Username</td>
+                <td><input id="username_box" class="formSelectStyle" style="width:60%;" type="text" value="sensor1@DEFAULT_TENANT"/></td>
+              </tr>
+              <tr>
+                <td>Password</td>
+                <td><input id="password_box" class="formSelectStyle" style="width:60%;" type="text" value="hono-secret"/></td>
+              </tr>
+            </table>
+
+        </div>
       	<h3>Select Rover ID:</h3>
       	<select class="formSelectStyle" id="roverID_select">
               <option value="-1">Please Select</option>

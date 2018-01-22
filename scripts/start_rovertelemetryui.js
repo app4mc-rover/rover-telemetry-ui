@@ -20,6 +20,9 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 5055;
 var mqtt = require('mqtt');
+var use_credentials_f = 0;
+var username_ = "";
+var password_ = "";
 
 var mqtt_client;
 var mqtt_addr;
@@ -93,6 +96,9 @@ io.on('connection', function (socket) {
 	socket.on('mqtt_connect', function(data)
 	{
 		rover_id = data.roverID;
+		use_credentials_f = data.useCredentials;
+		username_ = data.username;
+		password_ = data.password;
 		
 		if (typeof(mqtt_client) != 'undefined')
 		{
@@ -114,7 +120,16 @@ io.on('connection', function (socket) {
 		}
 
 		mqtt_addr = data.addr;
-		mqtt_client = mqtt.connect(mqtt_addr);
+		
+		/* Connect */
+		if (use_credentials_f == 0)
+		{
+			mqtt_client = mqtt.connect(mqtt_addr);
+		}
+		else
+		{
+			mqtt_client = mqtt.connect(mqtt_addr, {username:username_, password:password_});
+		}
 		
 		mqtt_client.on ('connect', function(){
 			if (mqtt_connected_f == 0)
