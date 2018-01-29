@@ -1,0 +1,29 @@
+{
+  "name": "rover-telemetry-ui",
+  "version": "1.0.0",
+  "description": "Telemetry UI to drive rovers using MQTT protocol",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/app4mc-rover/rover-telemetry-ui.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/app4mc-rover/rover-telemetry-ui/issues"
+  },
+  "homepage": "https://github.com/app4mc-rover/rover-telemetry-ui#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "html": "^1.0.0",
+    "http": "0.0.0",
+    "mqtt": "^2.15.1",
+    "path": "^0.12.7",
+    "serve-static": "^1.13.1",
+    "socket.io": "^2.0.4"
+  }
+}
