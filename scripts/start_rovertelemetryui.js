@@ -193,9 +193,6 @@ io.on('connection', function (socket) {
 					var myval = json_data.ultrasonic.rear;
 					socket.emit('ur_update', myval);
 					
-					var myval = json_data.qmc5883l.bearing;
-					socket.emit('qmcb_update', myval);
-					
 					var myval = json_data.hmc5883l.bearing;
 					socket.emit('hmcb_update', myval);
 					

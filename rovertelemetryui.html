@@ -112,10 +112,6 @@ socketIOClient.on('ur_update', function(data){
 	$('td#rear_val').html(data.toFixed(2));
 });
 
-socketIOClient.on('qmcb_update', function(data){
-	$('td#bearing_val').html(data.toFixed(2));
-});
-
 socketIOClient.on('hmcb_update', function(data){
 	$('td#bearing_val').html(data.toFixed(2));
 });
