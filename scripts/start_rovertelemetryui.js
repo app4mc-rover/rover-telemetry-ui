@@ -169,11 +169,11 @@ io.on('connection', function (socket) {
 				{
 					var json_data = JSON.parse(message.toString());
 					
-					var myval = json_data.dht22.temperature;
-					socket.emit('temperature_update', myval);
+					//var myval = json_data.dht22.temperature;
+					//socket.emit('temperature_update', myval);
 					
-					var myval = json_data.dht22.humidity;
-					socket.emit('humidity_update', myval);
+					//var myval = json_data.dht22.humidity;
+					//socket.emit('humidity_update', myval);
 					
 					var myval = json_data.infrared.rearright;
 					socket.emit('irr_update', myval);

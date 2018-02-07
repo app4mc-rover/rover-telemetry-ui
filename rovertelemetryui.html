@@ -176,7 +176,7 @@ socketIOClient.on('core3_update', function(data){
 
 /* Jquery-document Start */
 $(document).ready(function(){
-	
+
 /* Add options to rover ID selection*/
 for (i = 1; i<100; i++)
 {
@@ -201,7 +201,7 @@ $('#roverSpeed_select').change(function(){
  $('#forward_btn').mousedown(function(){
 	if (_OPERATION_MODE != "W")
 	{
-		_OPERATION_MODE = "W";	
+		_OPERATION_MODE = "W";
 		throwSocketIOEvent('control','W');
 	}
 	isDown = true;
@@ -210,7 +210,7 @@ $('#roverSpeed_select').change(function(){
 $('#backward_btn').mousedown(function(){
 	if (_OPERATION_MODE != "S")
 	{
-		_OPERATION_MODE = "S";	
+		_OPERATION_MODE = "S";
 		throwSocketIOEvent('control','S');
 	}
 	isDown = true;
@@ -219,7 +219,7 @@ $('#backward_btn').mousedown(function(){
 $('#turnleft_btn').mousedown(function(){
 	if (_OPERATION_MODE != "Q")
 	{
-		_OPERATION_MODE = "Q";	
+		_OPERATION_MODE = "Q";
 		throwSocketIOEvent('control','Q');
 	}
 	isDown = true;
@@ -228,7 +228,7 @@ $('#turnleft_btn').mousedown(function(){
 $('#turnright_btn').mousedown(function(){
 	if (_OPERATION_MODE != "E")
 	{
-		_OPERATION_MODE = "E";	
+		_OPERATION_MODE = "E";
 		throwSocketIOEvent('control','E');
 	}
 	isDown = true;
@@ -237,7 +237,7 @@ $('#turnright_btn').mousedown(function(){
 $('#turnbackright_btn').mousedown(function(){
 	if (_OPERATION_MODE != "D")
 	{
-		_OPERATION_MODE = "D";	
+		_OPERATION_MODE = "D";
 		throwSocketIOEvent('control','D');
 	}
 	isDown = true;
@@ -256,7 +256,7 @@ $('#roundleft_btn').mousedown(function(){
 	if (_OPERATION_MODE != "J")
 	{
 		_OPERATION_MODE = "J";
-		throwSocketIOEvent('control','J');	
+		throwSocketIOEvent('control','J');
 	}
 	isDown = true;
 });
@@ -265,7 +265,7 @@ $('#roundright_btn').mousedown(function(){
 	if (_OPERATION_MODE != "K")
 	{
 		_OPERATION_MODE = "K";
-		throwSocketIOEvent('control','K');	
+		throwSocketIOEvent('control','K');
 	}
 	isDown = true;
 });
@@ -273,7 +273,7 @@ $('#roundright_btn').mousedown(function(){
 $('#shutdown_btn').mousedown(function(){
 	// Send shutdown hook to RPi - we denote it by "R"
 	throwSocketIOEvent('control','R');
- 
+
 });
 
 /* Connect button */
@@ -290,11 +290,11 @@ $('#connect_btn').mousedown(function(){
 			roverID: ROVER_ID,
 			useCredentials: USE_CREDENTIALS,
 			username: $('#username_box').val(),
-			password: $('#password_box').val() 
+			password: $('#password_box').val()
 		};
 		throwSocketIOEvent('mqtt_connect',mqtt_connect_data);
 	}
-	
+
 });
 
 /* Mouseup handler for entire document */
@@ -303,8 +303,8 @@ $(document).mouseup(function(){
 	{
 		_OPERATION_MODE = "F";
 		throwSocketIOEvent('control','F');
-		isDown = false;	
-	}	 
+		isDown = false;
+	}
 });
 
 //Hide credentials box in the beginning
@@ -313,7 +313,7 @@ $('#credentials_box').hide();
 /* Credentials checkbox */
 $('input#credentials_checkbox').click(function(){
 	$('#credentials_box').toggle();
-	if ($('input#credentials_checkbox').is(':checked') == true) 
+	if ($('input#credentials_checkbox').is(':checked') == true)
 	{
 		USE_CREDENTIALS = 1;
 	}
@@ -362,9 +362,9 @@ $('input#credentials_checkbox').click(function(){
         </select>
         <h3>Connect:</h3>
         <input type="button" class="inputButtonStyle" id="connect_btn"  style="background:url(images/bgbutton.png) repeat-x; border:solid 2px red;" value="Connect" />
-        
+
       	<h3>Rover Control:</h3>
-      	
+
       	<table width="99%" border="0" cellspacing="0" cellpadding="0">
       	  <tr>
       	    <td><input type="button" class="inputButtonStyle" id="turnleft_btn"  style="background:url(images/Untitled-2_r1_c6_r1_c1.png) no-repeat scroll 50% 50%,url(images/bgbutton.png) repeat-x; " value="" /></td>
@@ -382,7 +382,7 @@ $('input#credentials_checkbox').click(function(){
       	    <td><input  type="button" class="inputButtonStyle" id="roundright_btn" style="background:url(images/roundright.png) no-repeat scroll 50% 50%,url(images/bgbutton.png) repeat-x; " value="" /></td>
    	      </tr>
    	    </table>
-        
+
         <h3>Rover Speed:</h3>
         <select class="formSelectStyle" id="roverSpeed_select">
               <option value="480">480 - Highest</option>
@@ -479,10 +479,15 @@ $('input#credentials_checkbox').click(function(){
         	    <td class="tdSensorUnit"></td>
        	      </tr>
         	  <tr>
+							<!--
         	    <td><img src="images/telemetry_icons/templogo.png" width="40" height="40" /></td>
         	    <td>Temperature</td>
         	    <td class="tdSensorVal" id="temperature_val">0.00000</td>
-        	    <td class="tdSensorUnit">deg</td>
+        	    <td class="tdSensorUnit">deg</td> -->
+							<td><img src="images/telemetry_icons/gyrologo.png" width="40" height="40" /></td>
+        	    <td>Bearing</td>
+        	    <td class="tdSensorVal" id="bearing_val">0.00000</td>
+        	    <td class="tdSensorUnit" >deg</td>
         	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
         	    <td>AccelX</td>
         	    <td class="tdSensorVal" id="accelx_val">0.00000</td>
@@ -492,10 +497,15 @@ $('input#credentials_checkbox').click(function(){
         	    <td class="tdSensorUnit"></td>
        	      </tr>
         	  <tr>
+							<!--
         	    <td><img src="images/telemetry_icons/templogo.png" width="40" height="40" /></td>
         	    <td>Humidity</td>
         	    <td class="tdSensorVal" id="humidity_val">0.00000</td>
-        	    <td class="tdSensorUnit">%</td>
+        	    <td class="tdSensorUnit">%</td> -->
+							<td>&nbsp;</td>
+						 <td>&nbsp;</td>
+						 <td>&nbsp;</td>
+						 <td>&nbsp;</td>
         	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
         	    <td>AccelY</td>
         	    <td class="tdSensorVal" id="accely_val">0.00000</td>
@@ -505,10 +515,10 @@ $('input#credentials_checkbox').click(function(){
         	    <td class="tdSensorUnit"></td>
        	      </tr>
         	  <tr>
-        	    <td><img src="images/telemetry_icons/gyrologo.png" width="40" height="40" /></td>
-        	    <td>Bearing</td>
-        	    <td class="tdSensorVal" id="bearing_val">0.00000</td>
-        	    <td class="tdSensorUnit" >deg</td>
+							<td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+							<td>&nbsp;</td>
         	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
         	    <td>AccelZ</td>
         	    <td class="tdSensorVal" id="accelz_val">0.00000</td>
@@ -538,7 +548,7 @@ $('input#credentials_checkbox').click(function(){
 		</div>
         <br />
       </div>
-      
+
     </div>
     <div class="footer">
       <span style="color:red;">rover-telemetry-ui</span> | MQTT Clients to interact with your rover<br />
