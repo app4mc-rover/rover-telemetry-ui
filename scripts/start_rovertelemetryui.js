@@ -33,12 +33,10 @@ var mqtt_connected_f = 0;
 var mqtt_trying_to_connect_f = 0;
 
 /* MQTT settings */
-sensorTopicPrefix = 'rover/';
-sensorTopicPostfix = '/RoverSensor/sensors';
 drivingTopicPrefix = 'rover/';
 drivingTopicPostfix = '/RoverDriving/control';
-coreTopicPrefix = 'rover/';
-coreTopicPostfix = '/RoverCore/usage';
+
+var telemetry_topic = 'telemetry';
 
 server.listen(port, function () {
 	console.log('Server listening at port %d', port);
@@ -50,7 +48,7 @@ app.use(express.static(path.join(__dirname, '..')));
 
 io.on('connection', function (socket) {
 	console.log ('A client is connected to socket.io server');
-	console.log ('Go to your browser and enter http://<your host>:5055/rovertelemetryui.html');	
+	console.log ('Go to your browser and enter http://<your host>:5055/rovertelemetryui.html');
 	/* MQTT connection failed */
 	function connectionFailed ()
 	{
@@ -60,10 +58,10 @@ io.on('connection', function (socket) {
 			socket.emit('console_', 'Connection failed');
 		}
 	}
-	
+
 	/* Speed data received */
 	socket.on('speed', function (data) {
-		rover_speed = data;	
+		rover_speed = data;
 		console.log('Speed is set to '+rover_speed);
 		socket.emit('console_', 'Speed is set to '+rover_speed);
 	});
@@ -82,7 +80,7 @@ io.on('connection', function (socket) {
 			var publish_data = JSON.stringify(publish_data);
 			/* Publish MQTT data */
 			mqtt_client.publish(drivingTopicPrefix+rover_id+drivingTopicPostfix, publish_data);
-			
+
 			console.log('Publishing '+publish_data+' to topic '+topic);
 			socket.emit('console_', 'Publishing '+publish_data+' to topic '+topic);
 		}
@@ -91,7 +89,7 @@ io.on('connection', function (socket) {
 			message: data
 		});*/
 	});
-	
+
 	/* MQTT connect event received */
 	socket.on('mqtt_connect', function(data)
 	{
@@ -99,20 +97,20 @@ io.on('connection', function (socket) {
 		use_credentials_f = data.useCredentials;
 		username_ = data.username;
 		password_ = data.password;
-		
+
 		if (typeof(mqtt_client) != 'undefined')
 		{
 			mqtt_client.end();
 			mqtt_connected_f = 0;
 		}
-		
+
 		if (mqtt_connected_f == 0)
 		{
 			console.log('Trying to connect MQTT broker @', data.addr);
 			socket.emit('console_', 'Trying to connect MQTT broker @'+data.addr+' with rover ID '+rover_id);
 			mqtt_trying_to_connect_f = 1;
 		}
-		
+
 		if (mqtt_trying_to_connect_f == 1)
 		{
 			setTimeout(connectionFailed, 5000); //5 seconds timeout
@@ -120,7 +118,7 @@ io.on('connection', function (socket) {
 		}
 
 		mqtt_addr = data.addr;
-		
+
 		/* Connect */
 		if (use_credentials_f == 0)
 		{
@@ -130,124 +128,110 @@ io.on('connection', function (socket) {
 		{
 			mqtt_client = mqtt.connect(mqtt_addr, {username:username_, password:password_});
 		}
-		
+
 		mqtt_client.on ('connect', function(){
 			if (mqtt_connected_f == 0)
 			{
 				/* If connection succeeds */
 				console.log('Connected to MQTT broker @'+mqtt_addr);
 				socket.emit('console_', 'Connected to MQTT broker @'+mqtt_addr+' with rover ID '+rover_id);
-				
+
 				/* Send mqtt connected event */
 				socket.emit ('mqtt_connected', 1);
-				
+
 				mqtt_connected_f = 1;
 				mqtt_trying_to_connect_f = 0;
-				
+
 				/* Subscribe to RoverSensor */
-				var sensor_topic = sensorTopicPrefix+rover_id+sensorTopicPostfix;
-				mqtt_client.subscribe(sensor_topic);
-				console.log('Subscribing to '+sensor_topic);
-				socket.emit('console_', 'Subscribing to '+sensor_topic);
-				
-				/* Subscribe to RoverCore */
-				var core_topic = coreTopicPrefix+rover_id+coreTopicPostfix;
-				mqtt_client.subscribe(core_topic);
-				console.log('Subscribing to '+core_topic);
-				socket.emit('console_', 'Subscribing to '+core_topic);
+				mqtt_client.subscribe(telemetry_topic);
+				console.log('Subscribing to '+telemetry_topic);
+				socket.emit('console_', 'Subscribing to '+telemetry_topic);
+
 			}
 		});
-		
+
 		mqtt_client.on('message', function (topic, message) {
-		  	// message is Buffer
-		  	console.log('Received '+message.toString()+' from '+topic);
+			// message is Buffer
+		  console.log('Received '+message.toString()+' from '+topic);
 			socket.emit('console_', 'Received '+message.toString()+' from '+topic);
-			
-			if (topic.includes("/RoverSensor/sensors"))
+
+			if (topic.includes(telemetry_topic))
 			{
 				try
 				{
 					var json_data = JSON.parse(message.toString());
-					
+
 					//var myval = json_data.dht22.temperature;
 					//socket.emit('temperature_update', myval);
-					
+
 					//var myval = json_data.dht22.humidity;
 					//socket.emit('humidity_update', myval);
-					
+
 					var myval = json_data.infrared.rearright;
 					socket.emit('irr_update', myval);
-					
+
 					var myval = json_data.infrared.rearleft;
 					socket.emit('irl_update', myval);
-					
+
 					var myval = json_data.infrared.frontright;
 					socket.emit('ifr_update', myval);
-					
+
 					var myval = json_data.infrared.frontleft;
 					socket.emit('ifl_update', myval);
-					
+
 					var myval = json_data.ultrasonic.front;
 					socket.emit('uf_update', myval);
-					
+
 					var myval = json_data.ultrasonic.rear;
 					socket.emit('ur_update', myval);
-					
+
 					var myval = json_data.hmc5883l.bearing;
 					socket.emit('hmcb_update', myval);
-					
+
 					var myval = json_data.gy521.gyro.x;
 					socket.emit('gyrox_update', myval);
-					
+
 					var myval = json_data.gy521.gyro.y;
 					socket.emit('gyroy_update', myval);
-					
+
 					var myval = json_data.gy521.gyro.z;
 					socket.emit('gyroz_update', myval);
-					
+
 					var myval = json_data.gy521.accel.x;
 					socket.emit('accelx_update', myval);
-					
+
 					var myval = json_data.gy521.accel.y;
 					socket.emit('accely_update', myval);
-					
+
 					var myval = json_data.gy521.accel.z;
 					socket.emit('accelz_update', myval);
-					
+
 					var myval = json_data.gy521.angle.x;
 					socket.emit('anglex_update', myval);
-					
+
 					var myval = json_data.gy521.angle.y;
 					socket.emit('angley_update', myval);
-					
+
 					var myval = json_data.gy521.angle.z;
 					socket.emit('anglez_update', myval);
-					
+
 					var myval = json_data.gy521.bearing;
 					socket.emit('gyb_update', myval);
-				}
-				catch(ex)
-				{
-					return;
-				}
-			}
-			else if (topic.includes("/RoverCore/usage"))
-			{
-				try
-				{
-					var json_data = JSON.parse(message.toString());
-					
-					var myval = json_data.core0;
+
+					var myval = json_data.cores.core0;
 					socket.emit('core0_update', myval);
-					
-					var myval = json_data.core1;
+
+					var myval = json_data.cores.core1;
 					socket.emit('core1_update', myval);
 
-					var myval = json_data.core2;
+					var myval = json_data.cores.core2;
 					socket.emit('core2_update', myval);
-					
-					var myval = json_data.core3;
+
+					var myval = json_data.cores.core3;
 					socket.emit('core3_update', myval);
+
+					var myval = json_data.cores.core4;
+					socket.emit('core4_update', myval);
 				}
 				catch(ex)
 				{
@@ -255,7 +239,7 @@ io.on('connection', function (socket) {
 				}
 			}
 		})
-		
+
 		mqtt_client.on ('reconnect', function(){
 			if (mqtt_connected_f == 1)
 			{
@@ -263,34 +247,28 @@ io.on('connection', function (socket) {
 				socket.emit ('mqtt_connected', 1);
 			}
 		});
-		
+
 		mqtt_client.on ('close', function(){
 			if (mqtt_connected_f == 1)
 			{
 				/* If connection succeeds */
 				console.log('Disconnected from MQTT broker @'+mqtt_addr);
 				socket.emit('console_', 'Disconnected from MQTT broker @'+mqtt_addr);
-				
+
 				/* Send mqtt connected event */
 				socket.emit ('mqtt_disconnected', 1);
-				
+
 				mqtt_connected_f = 0;
 				mqtt_trying_to_connect_f = 0;
 			}
-			
+
 		});
-		
+
 		mqtt_client.on ('error', function(){
 			console.log('Error occured @'+mqtt_addr);
 			socket.emit('console_', 'Error occured @'+mqtt_addr);
 		});
-		
-		
-		/* If subscription succeeds 
-		console.log('Subscribed to topic '+sensorTopicPrefix+data.roverID+sensorTopicPostfix);
-		socket.emit('console_', 'Subscribed to topic '+sensorTopicPrefix+data.roverID+sensorTopicPostfix);*/
-		
-		
+
 	});
-	
+
 });
