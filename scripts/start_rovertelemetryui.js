@@ -36,7 +36,8 @@ var mqtt_trying_to_connect_f = 0;
 drivingTopicPrefix = 'rover/';
 drivingTopicPostfix = '/RoverDriving/control';
 
-var telemetry_topic = 'telemetry';
+var telemetryTopicPrefix = 'rover/';
+var telemetryTopicPostfix = '/telemetry';
 
 server.listen(port, function () {
 	console.log('Server listening at port %d', port);
@@ -143,9 +144,9 @@ io.on('connection', function (socket) {
 				mqtt_trying_to_connect_f = 0;
 
 				/* Subscribe to RoverSensor */
-				mqtt_client.subscribe(telemetry_topic);
-				console.log('Subscribing to '+telemetry_topic);
-				socket.emit('console_', 'Subscribing to '+telemetry_topic);
+				mqtt_client.subscribe(telemetryTopicPrefix+rover_id+telemetryTopicPostfix);
+				console.log('Subscribing to '+telemetryTopicPrefix+rover_id+telemetryTopicPostfix);
+				socket.emit('console_', 'Subscribing to '+telemetryTopicPrefix+rover_id+telemetryTopicPostfix);
 
 			}
 		});
