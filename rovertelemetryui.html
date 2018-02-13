@@ -153,10 +153,6 @@ socketIOClient.on('anglez_update', function(data){
 	$('td#anglez_val').html(data.toFixed(2));
 });
 
-socketIOClient.on('gyb_update', function(data){
-	$('td#gyb_val').html(data.toFixed(2));
-});
-
 socketIOClient.on('core0_update', function(data){
 	$('td#core0_val').html(data.toFixed(2));
 });
@@ -532,9 +528,9 @@ $('input#credentials_checkbox').click(function(){
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
-        	    <td><img src="images/telemetry_icons/accellogo.png" width="40" height="40" /></td>
-        	    <td>Bearing</td>
-        	    <td class="tdSensorVal" id="gyb_val">0.00000</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
+        	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>
         	    <td>&nbsp;</td>

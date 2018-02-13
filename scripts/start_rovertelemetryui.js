@@ -216,9 +216,6 @@ io.on('connection', function (socket) {
 					var myval = json_data.gy521.angle.z;
 					socket.emit('anglez_update', myval);
 
-					var myval = json_data.gy521.bearing;
-					socket.emit('gyb_update', myval);
-
 					var myval = json_data.cores.core0;
 					socket.emit('core0_update', myval);
 
