@@ -156,7 +156,7 @@ io.on('connection', function (socket) {
 		  console.log('Received '+message.toString()+' from '+topic);
 			socket.emit('console_', 'Received '+message.toString()+' from '+topic);
 
-			if (topic.includes(telemetry_topic))
+			if (topic.includes("telemetry"))
 			{
 				try
 				{
